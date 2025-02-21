@@ -5,7 +5,7 @@ const nextButton = document.getElementById("next-btn");
 const restartButton = document.getElementById("restart-btn");
 const result = document.getElementById("result");
 
-let shuffledQuestions, currentQuestionsIndex, score;
+let shuffledQuestions, currentQuestionsIndex, score, shuffledAnswers;
 
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -15,7 +15,6 @@ function shuffleArray(array) {
 }
 
 const questions = [
-    // Perguntas de HTML
     {
         question: "Qual é a função da tag <head> em um documento HTML?",
         answer: [
@@ -34,6 +33,7 @@ const questions = [
             { texto: "<url>", correto: false }
         ],
     },
+
     {
         question: "Qual atributo HTML é usado para fornecer um texto alternativo a uma imagem?",
         answer: [
@@ -68,7 +68,7 @@ const questions = [
         answer: [
             { texto: "text-color", correto: false },
             { texto: "font-color", correto: false },
-            { texto: "foreground-color", correto: false }
+            { texto: "foreground-color", correto: false },
             { texto: "color", correto: true },
         ],
     },
@@ -77,7 +77,7 @@ const questions = [
         answer: [
             { texto: "px", correto: false },
             { texto: "pt", correto: false },
-            { texto: "vh", correto: false }
+            { texto: "vh", correto: false },
             { texto: "em", correto: true },
         ],
     },
@@ -124,7 +124,7 @@ const questions = [
         answer: [
             { texto: "alert()", correto: false },
             { texto: "document.write()", correto: false },
-            { texto: "print()", correto: false }
+            { texto: "print()", correto: false },
             { texto: "console.log()", correto: true },
         ],
     },
@@ -157,4 +157,87 @@ const questions = [
     }
 ];
 
+function startQuiz() {
+    score = 0;
+    questionContainer.style.display = "flex";
+    shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
+    currentQuestionsIndex = 0;
+    nextButton.classList.remove("hide");
+    restartButton.classList.add("hide");
+    result.classList.add("hide");
+    setNextQuestion();
+}
+
+function setNextQuestion() {
+    resetState();
+    showQuestion(shuffledQuestions[currentQuestionsIndex]);
+}
+
+function showQuestion(question) {
+    questionElement.innerText = question.question;
+
+    // Embaralha as alternativas
+    shuffledAnswers = [...question.answer].sort(() => Math.random() - 0.5);
+
+    shuffledAnswers.forEach((answer, index) => {
+        const inputGroup = document.createElement("div");
+        inputGroup.classList.add("input-group");
+
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.id = "answer" + index;
+        radio.name = "answer";
+        radio.value = index;
+
+        const label = document.createElement("label");
+        label.htmlFor = "answer" + index;
+        label.innerText = answer.texto;
+
+        inputGroup.appendChild(radio);
+        inputGroup.appendChild(label);
+        answerButton.appendChild(inputGroup);
+    });
+}
+
+function resetState() {
+    while (answerButton.firstChild) {
+        answerButton.removeChild(answerButton.firstChild);
+    }
+}
+
+nextButton.addEventListener("click", () => {
+    const selectedAnswer = document.querySelector("input[name='answer']:checked");
+
+    if (!selectedAnswer) {
+        alert("Por favor, selecione uma resposta.");
+        return;
+    }
+
+    const answerIndex = parseInt(selectedAnswer.value);
+    
+    // Agora verificamos diretamente se a resposta selecionada é correta
+    if (shuffledAnswers[answerIndex].correto) {
+        score++;
+    }
+
+    currentQuestionsIndex++;
+
+    if (currentQuestionsIndex < shuffledQuestions.length) {
+        setNextQuestion();
+    } else {
+        endQuiz();
+    }
+});
+
+restartButton.addEventListener("click", startQuiz);
+
+function endQuiz() {
+    questionContainer.style.display = "none";
+    nextButton.classList.add("hide");
+    restartButton.classList.remove("hide");
+    result.classList.remove("hide");
+    result.innerText = `Sua pontuação final: ${score} / ${shuffledQuestions.length}`;
+}
+
+startQuiz();
 
