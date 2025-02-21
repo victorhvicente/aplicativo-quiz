@@ -8,14 +8,14 @@
     <title>Quiz App</title>
 </head>
 <body>
-    <div class="quiz-container">
+    <main class="quiz-container">
         <div id="question-container">
-            <h1 id="question">Question</h1>
-            <div id="answer-buttons"></div>
+            <h1 id="question">Pergunta</h1>
+            <div id="answer-buttons" role="group" aria-label="Opções de resposta"></div>
         </div>
-        <button id="next-btn" class="btn hide">Next</button>
-        <div id="result" class="hide"></div>
-        <button id="restart-btn" class="btn hide">Restart</button>
-    </div>
+        <button id="next-btn" class="btn hide" aria-label="Próxima Pergunta">Próxima</button>
+        <div id="result" class="hide" role="status" aria-live="polite"></div>
+        <button id="restart-btn" class="btn hide">Reiniciar</button>
+    </main>
 </body>
 </html>
